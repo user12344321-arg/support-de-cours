@@ -1,291 +1,103 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Support de Cours</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #111827;
-      color: #f9fafb;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      background: #1f2937;
-      border-bottom: 1px solid #374151;
-      padding: 12px 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .titre-zone h1 { margin: 0; font-size: 1.05rem; }
-    .titre-zone p { margin: 2px 0 0; font-size: 0.8rem; color: #9ca3af; }
-    .controles {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    select, button, input {
-      background: #374151;
-      color: #f9fafb;
-      border: 1px solid #4b5563;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 0.9rem;
-    }
-    button { cursor: pointer; background: #2563eb; border-color: #2563eb; }
-    button:hover { background: #1d4ed8; }
-    button.secondaire { background: #374151; border-color: #4b5563; }
-    button.secondaire:hover { background: #4b5563; }
-    #verrou {
-      margin: auto;
-      max-width: 420px;
-      width: 90%;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 10px;
-      padding: 24px;
-      text-align: center;
-    }
-    #verrou form { display: flex; gap: 8px; margin-top: 14px; }
-    #verrou input { flex: 1; }
-    #visionneuse {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-      gap: 12px;
-    }
-    #etat { font-size: 0.9rem; color: #d1d5db; text-align: center; }
-    #canvas-pdf {
-      max-width: 100%;
-      background: #ffffff;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
-    footer {
-      background: #1f2937;
-      border-top: 1px solid #374151;
-      padding: 8px 16px;
-      font-size: 0.8rem;
-      color: #9ca3af;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support de Cours — Consultation Sécurisée</title>
+
+    <!-- Tailwind CSS pour un design clair et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- PDF.js via CDNJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        @media print {
+            body {
+                display: none !important;
+            }
+        }
+
+        #pdf-canvas {
+            transition: opacity 0.15s ease-in-out;
+        }
+    </style>
 </head>
-<body>
-  <!-- ==================================================
-       CONFIGURATION ENSEIGNANT (À PERSONNALISER AVANT MISE EN LIGNE)
-       ================================================== -->
-  <script>
-    const CONFIG_ENSEIGNANT = {
-      cleSecrete: "spe-physique",
-      prefixeFichier: "support-cours.pdf-pages-",
-      extensionFichier: ".pdf",
-      parties: [
-        { numero: 1, plage: "page 0 à 26" },
-        { numero: 2, plage: "page 27 à 56" },
-        { numero: 3, plage: "page 28 à 86" },
-        { numero: 4, plage: "page 87 à 116" },
-        { numero: 5, plage: "page 117 à 146" },
-        { numero: 6, plage: "page 147 à 176" },
-        { numero: 7, plage: "page 176 à 206" },
-        { numero: 8, plage: "page 207 à 236" },
-        { numero: 9, plage: "page 237 à 266" },
-        { numero: 10, plage: "page 267 à 296" },
-        { numero: 11, plage: "page 297 à 326" },
-        { numero: 12, plage: "page 327 à 356" },
-        { numero: 13, plage: "page 357 à 386" },
-        { numero: 14, plage: "page 387 à 416" },
-        { numero: 15, plage: "page 417 à 446" },
-        { numero: 16, plage: "page 447 à 476" },
-        { numero: 17, plage: "page 477 à fin" }
-      ],
-      titreDocument: "Support de Cours",
-      sousTitreCours: "Espace de consultation réservé aux élèves • Lecture en ligne uniquement",
-      activerModeTestEnseignant: false
-    };
-  </script>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col overflow-x-hidden">
 
-  <header>
-    <div class="titre-zone">
-      <h1 id="titre-cours">Support de Cours</h1>
-      <p id="sous-titre-cours"></p>
-    </div>
-    <div class="controles" id="barre-navigation" style="display: none;">
-      <label for="select-partie">Partie :</label>
-      <select id="select-partie"></select>
+    <!-- =====================================================================
+         CONFIGURATION ENSEIGNANT (À PERSONNALISER AVANT MISE EN LIGNE)
+         ===================================================================== -->
+    <script>
+        const CONFIG_ENSEIGNANT = {
+            cleSecrete: "spe-physique",
+            prefixeFichier: "support-cours.pdf-pages-",
+            extensionFichier: ".pdf",
+            parties: [
+                { numero: 1, plage: "page 0 à 26" },
+                { numero: 2, plage: "page 27 à 56" },
+                { numero: 3, plage: "page 28 à 86" },
+                { numero: 4, plage: "page 87 à 116" },
+                { numero: 5, plage: "page 117 à 146" },
+                { numero: 6, plage: "page 147 à 176" },
+                { numero: 7, plage: "page 176 à 206" },
+                { numero: 8, plage: "page 207 à 236" },
+                { numero: 9, plage: "page 237 à 266" },
+                { numero: 10, plage: "page 267 à 296" },
+                { numero: 11, plage: "page 297 à 326" },
+                { numero: 12, plage: "page 327 à 356" },
+                { numero: 13, plage: "page 357 à 386" },
+                { numero: 14, plage: "page 387 à 416" },
+                { numero: 15, plage: "page 417 à 446" },
+                { numero: 16, plage: "page 447 à 476" },
+                { numero: 17, plage: "page 477 à fin" }
+            ],
+            titreDocument: "Support de Cours",
+            sousTitreCours: "Espace de consultation réservé aux élèves • Lecture en ligne uniquement",
+            activerModeTestEnseignant: false
+        };
+    </script>
 
-      <button class="secondaire" id="btn-prev" type="button">Page préc.</button>
-      <span id="info-page">Page 1 / ?</span>
-      <button class="secondaire" id="btn-next" type="button">Page suiv.</button>
-
-      <input type="file" id="input-pdf-local" accept="application/pdf" style="display: none;" />
-      <button class="secondaire" id="btn-test-local" type="button" style="display: none;">Tester un PDF local</button>
-    </div>
-  </header>
-
-  <div id="verrou">
-    <h2>Accès restreint</h2>
-    <p>Entrez la clé d'accès ou ouvrez le lien complet fourni par l'enseignant.</p>
-    <form id="form-cle">
-      <input type="password" id="champ-cle" placeholder="Clé d'accès" required />
-      <button type="submit">Valider</button>
-    </form>
-    <p id="message-cle" style="color: #f87171; font-size: 0.85rem;"></p>
-  </div>
-
-  <main id="visionneuse">
-    <div id="etat">Chargement du document...</div>
-    <canvas id="canvas-pdf"></canvas>
-  </main>
-
-  <footer>
-    <span>Consultation protégée • Téléchargement désactivé dans l'interface</span>
-    <span>Astuce : utilisez les flèches gauche/droite pour tourner les pages</span>
-  </footer>
-
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-    const params = new URLSearchParams(window.location.search);
-    const verrouEl = document.getElementById("verrou");
-    const visionneuseEl = document.getElementById("visionneuse");
-    const barreNavEl = document.getElementById("barre-navigation");
-    const selectPartieEl = document.getElementById("select-partie");
-    const etatEl = document.getElementById("etat");
-    const canvasEl = document.getElementById("canvas-pdf");
-    const ctx = canvasEl.getContext("2d");
-    const infoPageEl = document.getElementById("info-page");
-    const btnTestLocal = document.getElementById("btn-test-local");
-    const inputPdfLocal = document.getElementById("input-pdf-local");
-
-    document.getElementById("titre-cours").textContent = CONFIG_ENSEIGNANT.titreDocument;
-    document.getElementById("sous-titre-cours").textContent = CONFIG_ENSEIGNANT.sousTitreCours;
-
-    let pdfDoc = null;
-    let pageCourante = 1;
-    let renduEnCours = false;
-    let pageEnAttente = null;
-
-    const totalParties = CONFIG_ENSEIGNANT.parties.length;
-    CONFIG_ENSEIGNANT.parties.forEach((partie) => {
-      const opt = document.createElement("option");
-      opt.value = `${CONFIG_ENSEIGNANT.prefixeFichier}${partie.numero}${CONFIG_ENSEIGNANT.extensionFichier}`;
-      opt.textContent = `Partie ${partie.numero} / ${totalParties} (${partie.plage})`;
-      selectPartieEl.appendChild(opt);
-    });
-
-    function debloquerSession() {
-      verrouEl.style.display = "none";
-      visionneuseEl.style.display = "flex";
-      barreNavEl.style.display = "flex";
-      if (CONFIG_ENSEIGNANT.activerModeTestEnseignant) {
-        btnTestLocal.style.display = "inline-block";
-      }
-      chargerPdfUrl(selectPartieEl.value);
-    }
-
-    const cleUrl = params.get("acces");
-    if (cleUrl && cleUrl === CONFIG_ENSEIGNANT.cleSecrete) {
-      debloquerSession();
-    }
-
-    document.getElementById("form-cle").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const saisie = document.getElementById("champ-cle").value.trim();
-      if (saisie === CONFIG_ENSEIGNANT.cleSecrete) {
-        debloquerSession();
-      } else {
-        document.getElementById("message-cle").textContent = "Clé incorrecte.";
-      }
-    });
-
-    async function rendrePage(num) {
-      if (!pdfDoc) return;
-      if (renduEnCours) {
-        pageEnAttente = num;
-        return;
-      }
-      renduEnCours = true;
-      const page = await pdfDoc.getPage(num);
-      const largeurMax = Math.min(window.innerWidth - 48, 1000);
-      const viewportInitial = page.getViewport({ scale: 1 });
-      const echelle = largeurMax / viewportInitial.width;
-      const viewport = page.getViewport({ scale: echelle });
-
-      canvasEl.width = viewport.width;
-      canvasEl.height = viewport.height;
-      await page.render({ canvasContext: ctx, viewport }).promise;
-
-      pageCourante = num;
-      infoPageEl.textContent = `Page ${pageCourante} / ${pdfDoc.numPages}`;
-      renduEnCours = false;
-
-      if (pageEnAttente !== null && pageEnAttente !== pageCourante) {
-        const prochaine = pageEnAttente;
-        pageEnAttente = null;
-        rendrePage(prochaine);
-      }
-    }
-
-    async function chargerPdfUrl(url) {
-      etatEl.textContent = `Chargement de ${url}...`;
-      canvasEl.style.display = "none";
-      try {
-        const task = pdfjsLib.getDocument(url);
-        pdfDoc = await task.promise;
-        etatEl.textContent = "";
-        canvasEl.style.display = "block";
-        await rendrePage(1);
-      } catch (err) {
-        etatEl.textContent = `Impossible d'ouvrir "${url}". Vérifiez que le fichier existe bien dans le même dossier que index.html.`;
-      }
-    }
-
-    selectPartieEl.addEventListener("change", () => chargerPdfUrl(selectPartieEl.value));
-    document.getElementById("btn-prev").addEventListener("click", () => {
-      if (pageCourante > 1) rendrePage(pageCourante - 1);
-    });
-    document.getElementById("btn-next").addEventListener("click", () => {
-      if (pdfDoc && pageCourante < pdfDoc.numPages) rendrePage(pageCourante + 1);
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (visionneuseEl.style.display === "none") return;
-      if (e.key === "ArrowLeft" && pageCourante > 1) rendrePage(pageCourante - 1);
-      if (e.key === "ArrowRight" && pdfDoc && pageCourante < pdfDoc.numPages) rendrePage(pageCourante + 1);
-    });
-
-    btnTestLocal.addEventListener("click", () => inputPdfLocal.click());
-    inputPdfLocal.addEventListener("change", async (e) => {
-      const fichier = e.target.files[0];
-      if (!fichier) return;
-      const buffer = await fichier.arrayBuffer();
-      etatEl.textContent = `Chargement local de ${fichier.name}...`;
-      canvasEl.style.display = "none";
-      try {
-        pdfDoc = await pdfjsLib.getDocument({ data: buffer }).promise;
-        etatEl.textContent = "";
-        canvasEl.style.display = "block";
-        await rendrePage(1);
-      } catch {
-        etatEl.textContent = "Impossible de lire ce fichier PDF local.";
-      }
-    });
-  </script>
-</body>
-</html>
+    <!-- =====================================================================
+         ÉCRAN 1 : PORTAIL D'ACCÈS SÉCURISÉ
+         ===================================================================== -->
+    <main id="portail-acces" class="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div class="w
