@@ -100,4 +100,603 @@
          ÉCRAN 1 : PORTAIL D'ACCÈS SÉCURISÉ
          ===================================================================== -->
     <main id="portail-acces" class="flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div class="w
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/70 border border-slate-100 p-6 sm:p-8 transition-all">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+
+            <div class="text-center mb-6">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/60 mb-3">
+                    Accès restreint par lien privé
+                </span>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                    Consultation de document
+                </h1>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+                    Ce document pédagogique est protégé. Utilisez le lien complet transmis par votre enseignant ou saisissez le code d'accès ci-dessous.
+                </p>
+            </div>
+
+            <form id="form-acces" class="space-y-4">
+                <div>
+                    <label for="input-cle" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+                        Code d'accès du cours
+                    </label>
+                    <input
+                        type="password"
+                        id="input-cle"
+                        placeholder="Ex: spe-physique"
+                        autocomplete="off"
+                        required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition text-sm"
+                    >
+                </div>
+
+                <div id="erreur-acces" class="hidden rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-xs text-rose-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Clé incorrecte. Vérifiez le lien fourni par votre professeur.</span>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                    <span>Accéder au document</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- =====================================================================
+         ÉCRAN 2 : VISIONNEUSE PDF SÉCURISÉE
+         ===================================================================== -->
+    <div id="espace-visionneuse" class="hidden flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+
+        <header class="bg-white border-b border-slate-200 px-3 sm:px-6 py-2.5 shadow-sm z-20 shrink-0">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+
+                <!-- Identité du document -->
+                <div class="flex items-center gap-3 min-w-0 max-w-full sm:max-w-md">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h2 id="ui-titre-doc" class="text-sm font-semibold text-slate-900 truncate">
+                            Support de Cours
+                        </h2>
+                        <p id="ui-sous-titre-doc" class="text-xs text-slate-500 truncate hidden sm:block">
+                            Espace de consultation réservé aux élèves • Lecture en ligne uniquement
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Barre d'outils centrale : Parties, Pages, Zoom, Plein écran -->
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 mx-auto sm:mx-0">
+
+                    <!-- Sélecteur de partie -->
+                    <div class="flex items-center gap-1.5 px-1">
+                        <label for="select-partie" class="text-xs font-medium text-slate-500 hidden md:inline">Partie :</label>
+                        <select
+                            id="select-partie"
+                            aria-label="Choisir une partie du cours"
+                            class="py-1.5 px-2.5 rounded-lg bg-white border border-slate-200 text-slate-800 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer"
+                        ></select>
+                    </div>
+
+                    <div class="h-5 w-px bg-slate-300 mx-0.5"></div>
+
+                    <!-- Page précédente -->
+                    <button
+                        id="btn-prev"
+                        type="button"
+                        title="Page précédente"
+                        class="p-2 rounded-lg text-slate-700 hover:bg-white hover:shadow-xs disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Sélecteur de page directe -->
+                    <div class="flex items-center gap-1.5 px-1 text-xs sm:text-sm font-medium text-slate-700">
+                        <span class="hidden lg:inline text-slate-400">Page</span>
+                        <input
+                            type="number"
+                            id="input-page-num"
+                            min="1"
+                            value="1"
+                            aria-label="Numéro de page"
+                            class="w-12 sm:w-14 text-center py-1 px-1 rounded-lg bg-white border border-slate-200 text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                        >
+                        <span class="text-slate-400">/</span>
+                        <span id="page-count" class="text-slate-600 font-semibold min-w-[1.5rem]">--</span>
+                    </div>
+
+                    <!-- Page suivante -->
+                    <button
+                        id="btn-next"
+                        type="button"
+                        title="Page suivante"
+                        class="p-2 rounded-lg text-slate-700 hover:bg-white hover:shadow-xs disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+
+                    <div class="h-5 w-px bg-slate-300 mx-0.5 hidden sm:block"></div>
+
+                    <!-- Zoom arrière -->
+                    <button
+                        id="btn-zoom-out"
+                        type="button"
+                        title="Zoom arrière"
+                        class="hidden sm:inline-flex p-2 rounded-lg text-slate-700 hover:bg-white hover:shadow-xs transition cursor-pointer"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+                        </svg>
+                    </button>
+
+                    <!-- Niveau de zoom -->
+                    <span id="zoom-level" class="hidden sm:inline-block text-xs font-semibold text-slate-600 min-w-[3rem] text-center select-none">
+                        100%
+                    </span>
+
+                    <!-- Zoom avant -->
+                    <button
+                        id="btn-zoom-in"
+                        type="button"
+                        title="Zoom avant"
+                        class="hidden sm:inline-flex p-2 rounded-lg text-slate-700 hover:bg-white hover:shadow-xs transition cursor-pointer"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                    </button>
+
+                    <!-- Ajuster à la largeur -->
+                    <button
+                        id="btn-fit-width"
+                        type="button"
+                        title="Ajuster à la largeur de l'écran"
+                        class="hidden md:inline-flex px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-white hover:text-indigo-600 transition cursor-pointer"
+                    >
+                        Ajuster
+                    </button>
+
+                    <!-- Mode Plein Écran -->
+                    <button
+                        id="btn-fullscreen"
+                        type="button"
+                        title="Plein écran"
+                        class="p-2 rounded-lg text-slate-700 hover:bg-white hover:text-indigo-600 transition cursor-pointer"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Actions Enseignant (optionnel) -->
+                <div id="barre-actions-enseignant" class="hidden items-center gap-2">
+                    <label
+                        for="input-pdf-local"
+                        title="Charger un fichier PDF local pour tester"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200/70 transition cursor-pointer"
+                    >
+                        <span>Tester un PDF local</span>
+                    </label>
+                    <input type="file" id="input-pdf-local" accept="application/pdf" class="hidden">
+
+                    <button
+                        id="btn-copier-lien"
+                        type="button"
+                        title="Copier le lien complet avec la clé d'accès"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium transition cursor-pointer"
+                    >
+                        <span>Copier lien élève</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Notification Toast -->
+        <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+            <div class="bg-slate-900 text-white text-xs font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span id="toast-message">Action effectuée</span>
+            </div>
+        </div>
+
+        <!-- Zone principale d'affichage du document PDF -->
+        <div id="canvas-wrapper" class="flex-1 overflow-auto bg-slate-200/75 p-3 sm:p-6 md:p-8 flex justify-center items-start relative">
+
+            <div id="loader-pdf" class="hidden absolute inset-0 bg-slate-100/80 backdrop-blur-xs z-10 flex flex-col items-center justify-center gap-3">
+                <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                <p id="loader-texte" class="text-sm font-medium text-slate-700">Chargement de la page...</p>
+                <div id="progress-container" class="hidden w-56 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-200"></div>
+                </div>
+            </div>
+
+            <div id="erreur-pdf" class="hidden max-w-md bg-white rounded-2xl p-6 shadow-md border border-rose-100 text-center my-auto">
+                <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-base font-bold text-slate-900">Impossible d'ouvrir le document</h3>
+                <p id="erreur-pdf-details" class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                    Vérifiez que le fichier PDF est bien présent dans le même dossier que index.html.
+                </p>
+            </div>
+
+            <div id="page-container" class="bg-white shadow-xl shadow-slate-400/25 rounded-sm overflow-hidden transition-transform">
+                <canvas id="pdf-canvas" class="block max-w-full h-auto"></canvas>
+            </div>
+        </div>
+
+        <footer class="bg-white border-t border-slate-200 px-4 py-2 text-xs text-slate-400 flex items-center justify-between shrink-0">
+            <span>Consultation protégée • Téléchargement et impression désactivés</span>
+            <span class="hidden sm:inline">Astuce : utilisez les flèches ← et → du clavier pour tourner les pages</span>
+        </footer>
+    </div>
+
+    <!-- =====================================================================
+         LOGIQUE JAVASCRIPT
+         ===================================================================== -->
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const state = {
+            pdfDoc: null,
+            pageNum: 1,
+            pageRendering: false,
+            pageNumPending: null,
+            scale: 1.15,
+            isAutoFit: true
+        };
+
+        const dom = {
+            portail: document.getElementById('portail-acces'),
+            visionneuse: document.getElementById('espace-visionneuse'),
+            formAcces: document.getElementById('form-acces'),
+            inputCle: document.getElementById('input-cle'),
+            erreurAcces: document.getElementById('erreur-acces'),
+            barreActionsEnseignant: document.getElementById('barre-actions-enseignant'),
+            uiTitreDoc: document.getElementById('ui-titre-doc'),
+            uiSousTitreDoc: document.getElementById('ui-sous-titre-doc'),
+            selectPartie: document.getElementById('select-partie'),
+            canvas: document.getElementById('pdf-canvas'),
+            canvasWrapper: document.getElementById('canvas-wrapper'),
+            pageContainer: document.getElementById('page-container'),
+            loader: document.getElementById('loader-pdf'),
+            loaderTexte: document.getElementById('loader-texte'),
+            progressContainer: document.getElementById('progress-container'),
+            progressBar: document.getElementById('progress-bar'),
+            erreurPdf: document.getElementById('erreur-pdf'),
+            erreurPdfDetails: document.getElementById('erreur-pdf-details'),
+            btnPrev: document.getElementById('btn-prev'),
+            btnNext: document.getElementById('btn-next'),
+            inputPageNum: document.getElementById('input-page-num'),
+            pageCount: document.getElementById('page-count'),
+            btnZoomIn: document.getElementById('btn-zoom-in'),
+            btnZoomOut: document.getElementById('btn-zoom-out'),
+            btnFitWidth: document.getElementById('btn-fit-width'),
+            zoomLevel: document.getElementById('zoom-level'),
+            btnFullscreen: document.getElementById('btn-fullscreen'),
+            inputPdfLocal: document.getElementById('input-pdf-local'),
+            btnCopierLien: document.getElementById('btn-copier-lien'),
+            toast: document.getElementById('toast-notification'),
+            toastMessage: document.getElementById('toast-message')
+        };
+
+        const ctx = dom.canvas.getContext('2d');
+
+        function peuplerParties() {
+            const total = CONFIG_ENSEIGNANT.parties.length;
+            dom.selectPartie.innerHTML = '';
+            CONFIG_ENSEIGNANT.parties.forEach((partie) => {
+                const opt = document.createElement('option');
+                opt.value = `${CONFIG_ENSEIGNANT.prefixeFichier}${partie.numero}${CONFIG_ENSEIGNANT.extensionFichier}`;
+                opt.textContent = `Partie ${partie.numero} / ${total} (${partie.plage})`;
+                dom.selectPartie.appendChild(opt);
+            });
+        }
+
+        let toastTimeout;
+        function afficherNotification(message) {
+            dom.toastMessage.textContent = message;
+            dom.toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                dom.toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function activerProtectionsInterface() {
+            dom.canvasWrapper.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                afficherNotification("Le téléchargement est désactivé sur ce document.");
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'p')) {
+                    e.preventDefault();
+                    afficherNotification("L'impression et l'enregistrement local sont désactivés.");
+                }
+                if (!dom.visionneuse.classList.contains('hidden') && document.activeElement !== dom.inputPageNum) {
+                    if (e.key === 'ArrowLeft') onPrevPage();
+                    if (e.key === 'ArrowRight') onNextPage();
+                }
+            });
+        }
+
+        function calculerEchelleAdaptee(page) {
+            const unscaledViewport = page.getViewport({ scale: 1 });
+            const margeHorizontale = window.innerWidth < 640 ? 24 : 64;
+            const largeurDisponible = dom.canvasWrapper.clientWidth - margeHorizontale;
+            const echelleCalculee = Math.min(Math.max(largeurDisponible / unscaledViewport.width, 0.5), 1.6);
+            return Math.round(echelleCalculee * 100) / 100;
+        }
+
+        function renderPage(num) {
+            state.pageRendering = true;
+            dom.canvas.style.opacity = '0.6';
+
+            state.pdfDoc.getPage(num).then((page) => {
+                if (state.isAutoFit) {
+                    state.scale = calculerEchelleAdaptee(page);
+                    state.isAutoFit = false;
+                }
+
+                const outputScale = window.devicePixelRatio || 1;
+                const viewport = page.getViewport({ scale: state.scale });
+
+                dom.canvas.width = Math.floor(viewport.width * outputScale);
+                dom.canvas.height = Math.floor(viewport.height * outputScale);
+                dom.canvas.style.width = Math.floor(viewport.width) + "px";
+                dom.canvas.style.height = Math.floor(viewport.height) + "px";
+
+                const transform = outputScale !== 1
+                    ? [outputScale, 0, 0, outputScale, 0, 0]
+                    : null;
+
+                const renderTask = page.render({
+                    canvasContext: ctx,
+                    transform: transform,
+                    viewport: viewport
+                });
+
+                renderTask.promise.then(() => {
+                    state.pageRendering = false;
+                    dom.canvas.style.opacity = '1';
+                    dom.loader.classList.add('hidden');
+                    dom.zoomLevel.textContent = Math.round(state.scale * 100) + '%';
+
+                    if (state.pageNumPending !== null) {
+                        const nextPending = state.pageNumPending;
+                        state.pageNumPending = null;
+                        renderPage(nextPending);
+                    }
+                }).catch((err) => {
+                    console.error("Erreur lors du rendu de la page :", err);
+                    state.pageRendering = false;
+                    dom.loader.classList.add('hidden');
+                });
+            });
+
+            dom.inputPageNum.value = num;
+            dom.btnPrev.disabled = (num <= 1);
+            dom.btnNext.disabled = (num >= state.pdfDoc.numPages);
+            dom.canvasWrapper.scrollTop = 0;
+        }
+
+        function queueRenderPage(num) {
+            if (state.pageRendering) {
+                state.pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        function chargerDocumentPdf(source, nomPersonnalise = null) {
+            dom.erreurPdf.classList.add('hidden');
+            dom.pageContainer.classList.remove('hidden');
+            dom.loader.classList.remove('hidden');
+            dom.loaderTexte.textContent = "Chargement de la partie...";
+            dom.progressContainer.classList.remove('hidden');
+            dom.progressBar.style.width = '10%';
+
+            if (nomPersonnalise) {
+                dom.uiTitreDoc.textContent = nomPersonnalise;
+            } else {
+                dom.uiTitreDoc.textContent = CONFIG_ENSEIGNANT.titreDocument;
+            }
+
+            const loadingTask = pdfjsLib.getDocument({
+                url: typeof source === 'string' ? source : undefined,
+                data: typeof source !== 'string' ? source : undefined,
+                disableAutoFetch: false,
+                disableStream: false
+            });
+
+            loadingTask.onProgress = function (progressData) {
+                if (progressData.total > 0) {
+                    const percent = Math.min(100, Math.round((progressData.loaded / progressData.total) * 100));
+                    dom.progressBar.style.width = percent + '%';
+                    dom.loaderTexte.textContent = `Chargement du document (${percent}%)...`;
+                }
+            };
+
+            loadingTask.promise.then((pdfDoc_) => {
+                state.pdfDoc = pdfDoc_;
+                state.pageNum = 1;
+                state.isAutoFit = true;
+
+                dom.pageCount.textContent = state.pdfDoc.numPages;
+                dom.inputPageNum.max = state.pdfDoc.numPages;
+                dom.progressContainer.classList.add('hidden');
+
+                renderPage(state.pageNum);
+            }).catch((error) => {
+                console.error("Erreur de chargement PDF :", error);
+                dom.loader.classList.add('hidden');
+                dom.pageContainer.classList.add('hidden');
+                dom.erreurPdf.classList.remove('hidden');
+                dom.erreurPdfDetails.textContent = `Impossible d'ouvrir "${source}". Vérifiez que le fichier existe bien dans le dépôt à côté de index.html.`;
+            });
+        }
+
+        function onPrevPage() {
+            if (!state.pdfDoc || state.pageNum <= 1) return;
+            state.pageNum--;
+            queueRenderPage(state.pageNum);
+        }
+
+        function onNextPage() {
+            if (!state.pdfDoc || state.pageNum >= state.pdfDoc.numPages) return;
+            state.pageNum++;
+            queueRenderPage(state.pageNum);
+        }
+
+        dom.selectPartie.addEventListener('change', () => {
+            chargerDocumentPdf(dom.selectPartie.value);
+        });
+
+        dom.btnPrev.addEventListener('click', onPrevPage);
+        dom.btnNext.addEventListener('click', onNextPage);
+
+        dom.inputPageNum.addEventListener('change', (e) => {
+            if (!state.pdfDoc) return;
+            let pageDemandee = parseInt(e.target.value, 10);
+            if (isNaN(pageDemandee) || pageDemandee < 1) pageDemandee = 1;
+            if (pageDemandee > state.pdfDoc.numPages) pageDemandee = state.pdfDoc.numPages;
+            state.pageNum = pageDemandee;
+            queueRenderPage(state.pageNum);
+        });
+
+        dom.btnZoomIn.addEventListener('click', () => {
+            if (!state.pdfDoc || state.scale >= 3.0) return;
+            state.scale = Math.round((state.scale + 0.2) * 100) / 100;
+            queueRenderPage(state.pageNum);
+        });
+
+        dom.btnZoomOut.addEventListener('click', () => {
+            if (!state.pdfDoc || state.scale <= 0.4) return;
+            state.scale = Math.round((state.scale - 0.2) * 100) / 100;
+            queueRenderPage(state.pageNum);
+        });
+
+        dom.btnFitWidth.addEventListener('click', () => {
+            if (!state.pdfDoc) return;
+            state.isAutoFit = true;
+            queueRenderPage(state.pageNum);
+        });
+
+        dom.btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {
+                    afficherNotification("Le mode plein écran n'est pas autorisé par ce navigateur.");
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        dom.inputPdfLocal.addEventListener('change', (e) => {
+            const fichier = e.target.files[0];
+            if (!fichier) return;
+            if (fichier.type !== 'application/pdf') {
+                afficherNotification("Veuillez sélectionner un fichier au format PDF.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                chargerDocumentPdf(evt.target.result, fichier.name);
+                afficherNotification(`Document local chargé (${(fichier.size / (1024 * 1024)).toFixed(1)} Mo)`);
+            };
+            reader.readAsArrayBuffer(fichier);
+        });
+
+        dom.btnCopierLien.addEventListener('click', () => {
+            const urlBase = window.location.href.split('?')[0];
+            const lienComplet = `${urlBase}?acces=${encodeURIComponent(CONFIG_ENSEIGNANT.cleSecrete)}`;
+            navigator.clipboard?.writeText(lienComplet).then(() => {
+                afficherNotification("Lien élève sécurisé copié dans le presse-papiers !");
+            }).catch(() => {
+                afficherNotification("Impossible de copier automatiquement le lien.");
+            });
+        });
+
+        let touchStartX = 0;
+        dom.canvasWrapper.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+            }
+        }, { passive: true });
+
+        dom.canvasWrapper.addEventListener('touchend', (e) => {
+            if (e.changedTouches.length === 1 && state.scale <= 1.2) {
+                const diffX = e.changedTouches[0].clientX - touchStartX;
+                if (diffX > 70) onPrevPage();
+                if (diffX < -70) onNextPage();
+            }
+        }, { passive: true });
+
+        function ouvrirVisionneuse() {
+            dom.portail.classList.add('hidden');
+            dom.visionneuse.classList.remove('hidden');
+
+            dom.uiTitreDoc.textContent = CONFIG_ENSEIGNANT.titreDocument;
+            dom.uiSousTitreDoc.textContent = CONFIG_ENSEIGNANT.sousTitreCours;
+
+            if (CONFIG_ENSEIGNANT.activerModeTestEnseignant) {
+                dom.barreActionsEnseignant.classList.remove('hidden');
+                dom.barreActionsEnseignant.classList.add('flex');
+            }
+
+            peuplerParties();
+            chargerDocumentPdf(dom.selectPartie.value);
+        }
+
+        function verifierAccesInitial() {
+            activerProtectionsInterface();
+            const paramsUrl = new URLSearchParams(window.location.search);
+            const cleUrl = paramsUrl.get('acces');
+
+            if (cleUrl && cleUrl.trim() === CONFIG_ENSEIGNANT.cleSecrete) {
+                ouvrirVisionneuse();
+            }
+        }
+
+        dom.formAcces.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const saisie = dom.inputCle.value.trim();
+            if (saisie === CONFIG_ENSEIGNANT.cleSecrete) {
+                dom.erreurAcces.classList.add('hidden');
+                try {
+                    const nouvelleUrl = `${window.location.pathname}?acces=${encodeURIComponent(saisie)}`;
+                    window.history.replaceState({}, '', nouvelleUrl);
+                } catch (err) {}
+                ouvrirVisionneuse();
+            } else {
+                dom.erreurAcces.classList.remove('hidden');
+                dom.inputCle.focus();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', verifierAccesInitial);
+    </script>
+</body>
+</html>
