@@ -94,7 +94,25 @@
       cleSecrete: "spe-physique",
       prefixeFichier: "support-cours.pdf-pages-",
       extensionFichier: ".pdf",
-      nombreParties: 17,
+      parties: [
+        { numero: 1, plage: "page 0 à 26" },
+        { numero: 2, plage: "page 27 à 56" },
+        { numero: 3, plage: "page 28 à 86" },
+        { numero: 4, plage: "page 87 à 116" },
+        { numero: 5, plage: "page 117 à 146" },
+        { numero: 6, plage: "page 147 à 176" },
+        { numero: 7, plage: "page 176 à 206" },
+        { numero: 8, plage: "page 207 à 236" },
+        { numero: 9, plage: "page 237 à 266" },
+        { numero: 10, plage: "page 267 à 296" },
+        { numero: 11, plage: "page 297 à 326" },
+        { numero: 12, plage: "page 327 à 356" },
+        { numero: 13, plage: "page 357 à 386" },
+        { numero: 14, plage: "page 387 à 416" },
+        { numero: 15, plage: "page 417 à 446" },
+        { numero: 16, plage: "page 447 à 476" },
+        { numero: 17, plage: "page 477 à fin" }
+      ],
       titreDocument: "Support de Cours",
       sousTitreCours: "Espace de consultation réservé aux élèves • Lecture en ligne uniquement",
       activerModeTestEnseignant: false
@@ -163,12 +181,13 @@
     let renduEnCours = false;
     let pageEnAttente = null;
 
-    for (let i = 1; i <= CONFIG_ENSEIGNANT.nombreParties; i++) {
+    const totalParties = CONFIG_ENSEIGNANT.parties.length;
+    CONFIG_ENSEIGNANT.parties.forEach((partie) => {
       const opt = document.createElement("option");
-      opt.value = `${CONFIG_ENSEIGNANT.prefixeFichier}${i}${CONFIG_ENSEIGNANT.extensionFichier}`;
-      opt.textContent = `Partie ${i} / ${CONFIG_ENSEIGNANT.nombreParties}`;
+      opt.value = `${CONFIG_ENSEIGNANT.prefixeFichier}${partie.numero}${CONFIG_ENSEIGNANT.extensionFichier}`;
+      opt.textContent = `Partie ${partie.numero} / ${totalParties} (${partie.plage})`;
       selectPartieEl.appendChild(opt);
-    }
+    });
 
     function debloquerSession() {
       verrouEl.style.display = "none";
